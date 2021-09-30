@@ -23,6 +23,7 @@ import (
 	"github.com/matbarofex/mtz-crypto/pkg/store/db"
 	"github.com/matbarofex/mtz-crypto/pkg/store/memory"
 	"github.com/patrickmn/go-cache"
+	ginprometheus "github.com/zsais/go-gin-prometheus"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 	"gorm.io/driver/postgres"
@@ -44,6 +45,13 @@ func main() {
 
 	// Start Gin Engine
 	r := gin.New()
+
+	// Configuración para métricas (Prometheus)
+	p := ginprometheus.NewPrometheus("gin")
+	p.ReqCntURLLabelMappingFn = func(c *gin.Context) string {
+		return c.Request.URL.Path
+	}
+	p.Use(r)
 
 	// Conexión a DB
 	gormDB := createGomDB(cfg)
