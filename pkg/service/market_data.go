@@ -1,8 +1,6 @@
 package service
 
 import (
-	"fmt"
-
 	"github.com/matbarofex/mtz-crypto/pkg/model"
 	"github.com/matbarofex/mtz-crypto/pkg/store"
 	"go.uber.org/zap"
@@ -30,7 +28,7 @@ func NewMarketDataService(
 
 func (s *marketDataService) GetMD(symbol string) (md model.MarketData, err error) {
 	if symbol == "" {
-		return md, fmt.Errorf("symbol is required")
+		return md, model.ErrSymbolIsRequired
 	}
 
 	return s.mdStore.GetMD(symbol)

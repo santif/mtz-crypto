@@ -36,7 +36,8 @@ type GetWalletValueResponse struct {
 type MdChannel chan MarketData
 
 var (
-	// TODO agregar el resto de los errores
-	ErrWalletIsRequired = errors.New("wallet is required")
-	ErrUnexpected       = errors.New("unexpected error")
+	ErrSymbolIsRequired  = errors.New("symbol is required")
+	ErrLastPriceNotFound = errors.New("last price not found")
+	ErrWalletIsRequired  = errors.New("wallet is required")
+	ErrUnexpected        = errors.New("unexpected error")
 )
