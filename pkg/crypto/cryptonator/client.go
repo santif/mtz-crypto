@@ -174,7 +174,7 @@ func (c *cryptonatorClient) retrieveMD(externalSymbol, symbol string) (md model.
 	}
 
 	if !resp.Ticker.Price.Valid {
-		return md, fmt.Errorf("last price not found")
+		return md, model.ErrLastPriceNotFound
 	}
 
 	timestamp := time.Unix(int64(resp.Timestamp), 0)
