@@ -1,3 +1,8 @@
+SVC_NAME := $(shell grep 'const ServiceName' pkg/version.go | cut -f2 -d '"')
+APP_VSN := $(shell grep 'const Version' pkg/version.go | cut -f2 -d '"')
+BUILD := $(shell git rev-parse --short HEAD)
+IMAGE_NAME = mtzio/${SVC_NAME}
+
 .PHONY: build
 build:
 	go build -o mtz-crypto-service ./cmd/...
@@ -14,6 +19,18 @@ generate-mocks:
 test: build
 	go test -covermode=atomic -race -v -count=1 -coverprofile=coverage.out ./pkg/...
 	go tool cover -func coverage.out | grep total
+
+.PHONY: docker-build
+docker-build:
+	docker build \
+		-t $(IMAGE_NAME):$(APP_VSN)-$(BUILD) \
+		-t $(IMAGE_NAME):latest \
+		.
+
+.PHONY: docker-push
+docker-push:
+	docker push $(IMAGE_NAME):$(APP_VSN)-$(BUILD)
+	docker push $(IMAGE_NAME):latest
 
 .PHONY: load-test
 load-test:
