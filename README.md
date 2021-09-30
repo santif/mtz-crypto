@@ -29,7 +29,7 @@ si hubiera que reiniciarla desde 0, ejecutar previamente `docker-compose down`.
 Build de la app:
 
 ```
-go build ./cmd/...
+make build
 ```
 
 Ejecutar:
@@ -40,15 +40,12 @@ Ejecutar:
 
 Luego, acceder a http://localhost:8000/wallet/value?wallet=wallet1
 
-TODO: Agregar `Makefile` (clase 5)
 
 ## Ejecución de tests
 
 ```
-go test -v ./pkg/...
+make test
 ```
-
-TODO: Agregar `Makefile` (clase 5)
 
 ## Documentación
 
