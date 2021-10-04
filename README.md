@@ -73,6 +73,7 @@ make test
 - Tests automáticos y mocks: [testify](https://github.com/stretchr/testify)
 - Generación de código de mocks: [mockery](https://github.com/vektra/mockery)
 - HTTP Benchmarking tool: [h2load](https://nghttp2.org/documentation/h2load-howto.html)
+- Linting: [`golangci-lint`](https://github.com/golangci/golangci-lint)
 - [Docker](https://docs.docker.com/) y [Docker compose](https://docs.docker.com/compose/)
 
 ## Links útiles
