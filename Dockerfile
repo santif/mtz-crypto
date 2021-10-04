@@ -1,24 +1,53 @@
-# Build stage
-FROM golang:1.17 AS build
+ARG GO_VERSION=1.17
 
-ADD cmd /work/cmd
-ADD pkg /work/pkg
-ADD go.mod /work/go.mod
-ADD go.sum /work/go.sum
+# STAGE 1: build executable
+FROM golang:${GO_VERSION}-alpine AS build
 
-RUN cd /work && \
-    CGO_ENABLED=0 go build -o mtz-crypto-service ./cmd/mtz-crypto-service
+RUN apk add --no-cache git
 
-# Final stage
-FROM alpine:3.13
+WORKDIR /work
+ADD cmd ./cmd
+ADD pkg ./pkg
+ADD go.mod ./go.mod
+ADD go.sum ./go.sum
 
-RUN apk --no-cache update && apk add ca-certificates
+# Build the executable
+RUN CGO_ENABLED=0 go build -o /service ./cmd/mtz-crypto-service
 
-WORKDIR /app
-COPY --from=build /work/mtz-crypto-service .
+# STAGE 2: build the final image
+FROM gcr.io/distroless/static AS final
 
-EXPOSE 4000
+ARG SVC_NAME
+ARG APP_VSN
+ARG GIT_COMMIT
+ARG BUILD_DATE
 
-ENV MTZ_CRYPTO_LOGGING_FORMAT="json"
+USER nonroot:nonroot
+ 
+# copy compiled app
+COPY --from=build --chown=nonroot:nonroot /service /service
 
-ENTRYPOINT [ "./mtz-crypto-service" ]
+
+# setup environment
+ENV MTZ_CRYPTO_LOGGING_FORMAT="json" \
+    VERSION=${APP_VSN}
+
+# the container listens on the specified network ports at runtime
+EXPOSE 8000/tcp
+
+# run binary
+ENTRYPOINT ["/service"]
+
+# ----------------------------------------------------------------------------------------
+# IMPORTANTE: Mantener estas líneas al FINAL del archivo
+# ----------------------------------------------------------------------------------------
+LABEL org.opencontainers.image.url="https://github.com/matbarofex/mtz-crypto" \
+      org.opencontainers.image.version="${VERSION}" \
+      org.opencontainers.image.vendor="Matriz SA" \
+      org.opencontainers.image.licenses="MIT" \
+      org.opencontainers.image.ref.name="mtzio/mtz-crypto" \
+      org.opencontainers.image.title="mtz-crypto" \
+      org.opencontainers.image.description="Servicio de ejemplo para capacitación Go" \
+      org.opencontainers.image.revision="${GIT_COMMIT}" \
+      org.opencontainers.image.created="${BUILD_DATE}"
+# ----------------------------------------------------------------------------------------

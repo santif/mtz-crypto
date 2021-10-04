@@ -10,3 +10,10 @@ services:
       POSTGRES_DB: crypto_db_dev
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+
+  mtz-crypto:
+    image: mtzio/mtz-crypto
+    ports:
+      - 8000:8000
+    environment:
+      MTZ_CRYPTO_POSTGRES_HOST: db
